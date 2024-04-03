@@ -15,7 +15,10 @@ import reshaping as r
 import os
 from argparse import ArgumentParser
 import sys
+import time
+import numpy as np
 
+start = time.time()
 
 ASHP_VERSION = "0.9"
 progname = os.path.basename(sys.argv[0])
@@ -47,6 +50,7 @@ del bad
 
 #data = r.ReduceSize(good, red_y=options.size)
 data = good
+data = r.ReduceSize(data, red_x=10)
 
 if options.laplacian:
     data = p.laplacian(data)
@@ -56,9 +60,13 @@ if options.func:
 else:
     windows = r.ReduceSize(r.Window(data, windowsize=options.window_size, num_win=options.num_window, WindowFunction='flat'), red_y=options.reduction)
 
-
 if options.metric == "MSE":
-    OSS.save_np(f.MSE_with_window(data, windows), name=options.outfile) # + ".npy")
-if options.metric == "conv":
-    OSS.save_np(f.Data_from_convMPPB(data, windows), name=options.outfile) # + ".npy")
+    OSS.save_np(f.MSE_with_window(data, windows), name=options.outfile, spec='', path='') # + ".npy")
+elif options.metric == "conv":
+    OSS.save_np(f.Data_from_convMPPB(data, windows), name=options.outfile, spec='', path='') # + ".npy")
+elif options.metric == "CC":
+    OSS.save_np(f.Data_from_CC(data, windows), name=options.outfile, spec='', path='') # + ".npy")
 
+end = time.time()
+
+print(end-start)
