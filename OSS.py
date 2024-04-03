@@ -216,7 +216,7 @@ def open_np(File):
     Arr = np.load(File)
     return Arr
     
-def Display_conv_data(data, ind1, ind2, save=False, name='conv_data', path='Uni/Masterarbeit/fibrils/Images/'):
+def Display_conv_data(data, ind1, ind2, save=False,show=False, name='conv_data', path='Uni/Masterarbeit/fibrils/Images/'):
     """
     Displays Data from MSE or convolution calculations
 
@@ -237,8 +237,9 @@ def Display_conv_data(data, ind1, ind2, save=False, name='conv_data', path='Uni/
     """
     shape = np.shape(data)
     scale = np.linspace(1, shape[0], shape[0])
+    ycoord= (data[:,1]+95)%200
     plotdataX = [scale, scale, data[:, 0], data[:, 2]]
-    plotdataY = [data[:, 0], data[:, 2], data[:, 1], data[:, 1]]
+    plotdataY = [data[:, 0], data[:, 2], ycoord, ycoord]
     axisX = ['Index of Window', 'Index of Window', 'max value', 'x-position']
     axisY = ['max value', 'x-position', 'y-position', 'y-position']
     fig, ax = plt.subplots(nrows=2, ncols=2)
@@ -247,16 +248,23 @@ def Display_conv_data(data, ind1, ind2, save=False, name='conv_data', path='Uni/
     i = 0
     for row in ax:
         for col in row:
-            col.scatter(plotdataX[i], plotdataY[i])
+            col.scatter(plotdataX[i], plotdataY[i], color=(0,61/255,100/255))
             col.set(xlabel=axisX[i], ylabel=axisY[i])
             i += 1
+
+    # Setting x and y limits for the fourth graph
+    ax[1, 1].set_xlim(0, 200)
+    ax[1, 1].set_ylim(0, 200)
+
     if save:
         plt.savefig(path + name, dpi=800)
-    plt.show()
+    if show:
+        plt.show()
     
-def display_classes(images, labels, save=False, path='Images/', name='temp', frame_width=6):
+def display_classes(images, labels, save=False, path='Images/', name='temp', frame_width=6, color='default'):
     frame_colors=['red', 'blue', 'green', 'yellow', 'purple', 
                                         'orange', 'pink', 'brown', 'gray', 'cyan']
+    frame_colors_cd=[(0,61,100),(255, 201, 185), (195,214,155), (62, 137, 137), (117, 109, 84)]
     chunk_size = 20
     chunks = [images[i:i + chunk_size] for i in range(0, len(images), chunk_size)]
     for chunk_index, chunk in enumerate(chunks):
@@ -267,8 +275,14 @@ def display_classes(images, labels, save=False, path='Images/', name='temp', fra
                 ax.imshow(chunk[i], cmap='gray')
                 ax.set_axis_off()
                 ax.set_title("Class %d" % (labels[chunk_index * chunk_size + i + 1]), fontsize=20)
-                rect = patches.Rectangle((0, 0), chunk[i].shape[0], chunk[i].shape[1],
+                if color=='default':
+                    rect = patches.Rectangle((0, 0), chunk[i].shape[0], chunk[i].shape[1],
                                          linewidth=frame_width, edgecolor=frame_colors[labels[chunk_index * chunk_size + i + 1]], facecolor='none')
+                elif color=='juelich':
+                    rect = patches.Rectangle((0, 0), chunk[i].shape[0], chunk[i].shape[1],
+                                         linewidth=frame_width, edgecolor=frame_colors_cd[labels[chunk_index * chunk_size + i + 1]], facecolor='none')
+                else:
+                    print("Unknown paramter for color")
                 ax.add_patch(rect)
         plt.tight_layout()
         if save:
@@ -279,9 +293,10 @@ def display_classes(images, labels, save=False, path='Images/', name='temp', fra
         plt.show()
         
         
-def display_classes2(images, labels, save=False, path='Images/', name='temp', frame_width=10):
+def display_classes2(images, labels, save=False, path='Images/', name='temp', frame_width=10, color='default'):
     frame_colors=['red', 'blue', 'green', 'yellow', 'purple', 
                                         'orange', 'pink', 'brown', 'gray', 'cyan']
+    frame_colors_cd=[(0,61/255,100/255),(255/255, 201/255, 185/255), (195/255,214/255,155/255), (62/255, 137/255, 137/255), (117/255, 109/255, 84/255)]
     chunk_size = 20
     num_img = math.ceil(len(images)/chunk_size)
     missing_labels = np.zeros(num_img*chunk_size, dtype=int)
@@ -296,8 +311,14 @@ def display_classes2(images, labels, save=False, path='Images/', name='temp', fr
                 ax.imshow(chunk[i], cmap='gray')
                 ax.set_axis_off()
                 ax.set_title("Class %d" % (labels[chunk_index * chunk_size + i + 1]), fontsize=20)
-                rect = patches.Rectangle((0, 0), chunk[i].shape[0], chunk[i].shape[1],
+                if color=='default':
+                    rect = patches.Rectangle((0, 0), chunk[i].shape[0], chunk[i].shape[1],
                                          linewidth=frame_width, edgecolor=frame_colors[labels[chunk_index * chunk_size + i + 1]], facecolor='none')
+                elif color=='juelich':
+                    rect = patches.Rectangle((0, 0), chunk[i].shape[0], chunk[i].shape[1],
+                                         linewidth=frame_width, edgecolor=frame_colors_cd[labels[chunk_index * chunk_size + i + 1]], facecolor='none')
+                else:
+                    print("Unknown paramter for color")
                 ax.add_patch(rect)
             else:
                 ax.set_axis_off()
