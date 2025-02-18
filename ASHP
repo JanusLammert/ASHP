@@ -167,13 +167,13 @@ for nc in options.cluster_num:
 
     list_df_class = svs.split_dataframe_by_classes(particles, class_clusters, translation_table)
 
-    for i, particles in enumerate(list_df_class):
-        starfile.write(svs.dataframes_to_dict(optics, particles), options.output + '/class_' + str(nc) + '_sorted_by_class_' + str(i) + '.star')
+    for i, particles_new in enumerate(list_df_class):
+        starfile.write(svs.dataframes_to_dict(optics, particles_new), options.output + '/class_' + str(nc) + '_sorted_by_class_' + str(i) + '.star')
 
     list_df_helix = svs.split_dataframe_by_fibrils(particles, helix_clusters)
 
-    for i, particles in enumerate(list_df_helix):
-        starfile.write(svs.dataframes_to_dict(optics, particles), options.output + '/class_' + str(nc) + '_sorted_by_fib_' + str(i) + '.star')
+    for i, particles_new in enumerate(list_df_helix):
+        starfile.write(svs.dataframes_to_dict(optics, particles_new), options.output + '/class_' + str(nc) + '_sorted_by_fib_' + str(i) + '.star')
         
     print('Successfully saved star files!')
     print('Generate plots')

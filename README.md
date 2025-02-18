@@ -1,6 +1,6 @@
 # ASHP
 Auto-Selection-Helical-Polymers
-Tool to do Autoselection of 2D classes based on the 2Dclass-averages.
+Tool to do Autoselection of 2D classes based on the 2Dclass-averages combined with CHEP
 
 # Prerequisits
 1. Conda

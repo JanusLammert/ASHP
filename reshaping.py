@@ -118,3 +118,34 @@ def ReduceSize(data, red_x=0, red_y=0):
         else:
             print('ERROR: Please input a 2D or 3D or 4D Array in ReduceSize')
     return reduced_img
+
+def reduce_matrix(matrix, indices):
+    # Convert indices array to set for faster lookup
+    indices_set = set(indices)
+    
+    # Create a mask for selecting rows and columns based on indices
+    mask = np.array([i in indices_set for i in range(len(matrix))])
+    
+    # Select rows and columns based on the mask
+    reduced_matrix = matrix[mask][:, mask]
+    
+    return reduced_matrix
+
+def delete_rows(input_array, indices):
+    """
+    Select rows from a 2D NumPy array based on the provided indices.
+
+    Parameters:
+    - input_array (numpy.ndarray): Input 2D NumPy array.
+    - indices (list or numpy.ndarray): Array of row indices to select.
+
+    Returns:
+    - numpy.ndarray: New array containing only the selected rows.
+    """
+    # Convert indices to NumPy array if it's not already
+    indices = np.array(indices)
+
+    # Select rows based on indices
+    selected_rows = input_array[indices]
+
+    return selected_rows

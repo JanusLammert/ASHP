@@ -174,7 +174,7 @@ def convMP(ind_2, i, k, class_img, class_window):
 #                index = m
                 cache = results_new[j,:,m]
         res[j,:] = cache
-        print(res)
+#        print(res)
     return i, k, res
 
 def CC(ind_2, i, k, class_img, class_window):
@@ -439,7 +439,7 @@ def inner_MSE_function2(j, k, Data, Window):
         for i in range(wini):
             minV = np.min(results[i, :, :])
             pos = np.where(results[i, :, :] == minV)
-            print(minV, pos[0], pos[1])
+#            print(minV, pos[0], pos[1])
             result[i, :,l] = np.array([minV, pos[0], pos[1]], dtype=float)
     for l in range(wini):
         cache = result[l,:,0]

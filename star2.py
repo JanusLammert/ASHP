@@ -41,11 +41,14 @@ def normalize_columns(matrix):
 
 
 def chep(path='/home/janus/Jureca/230814_red_tau/Select/job068/particles.star'):
-
+    #print(path)
     # Read the Star file and create two DataFrames for optics and particle data
     star = starfile.read(path)
+    #print(star)
     optics = pd.DataFrame.from_dict(star["optics"])
     particles = pd.DataFrame.from_dict(star["particles"])
+
+    print('Extracted particles successfully!')
 
     # Create an empty list for micrograph names
     Micrographs = []
@@ -120,4 +123,5 @@ def chep(path='/home/janus/Jureca/230814_red_tau/Select/job068/particles.star'):
     matrix_class_norm = normalize_rows(Matrix)
     matrix_helix_norm = normalize_columns(Matrix)
 
-    return matrix_class_norm, matrix_helix_norm
+    return matrix_class_norm, matrix_helix_norm, particles, optics
+

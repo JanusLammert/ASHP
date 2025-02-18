@@ -10,18 +10,19 @@ import pandas as pd
 import starfile
 import numpy as np
 
-def create_empty_dataframes(df, n):
-    # Check if n is a positive integer
-    if not isinstance(n, int) or n <= 0:
-        raise ValueError("n should be a positive integer.")
+def dataframes_to_dict(df1, df2):
+    """
+    Takes two pandas DataFrames and returns a dictionary with the specified keys.
 
-    # Get column names from the input DataFrame
-    columns = df.columns.tolist()
+    Parameters:
+    df1 (pandas.DataFrame): First DataFrame
+    df2 (pandas.DataFrame): Second DataFrame
 
-    # Create a list of empty DataFrames
-    empty_dataframes = [pd.DataFrame(columns=columns) for _ in range(n)]
-
-    return empty_dataframes
+    Returns:
+    dict: A dictionary with keys 'OPTICS' and 'data' mapping to df1 and df2, respectively.
+    """
+    data_dict = {'optics': df1, 'particles': df2}
+    return data_dict
 
 def split_dataframe_by_array(df, assignment_array):
     # Check if the length of the dataframe and the assignment array are the same
@@ -56,22 +57,39 @@ def write_dataframes_to_starfile(dataframe1, dataframe2, output_filename):
         # Write the second DataFrame
         sf.write({f"{col}_2": values for col, values in dict2.items()})
 
-
-def split_dataframe_by_classes(df, labels):
-    n_dataframes = np.max(labels)
-    dataframes = create_empty_dataframes(df, n_dataframes)
+def split_dataframe_by_classes(df, labels, tt):
+    n_dataframes = int(np.max(labels)) + 1
+    dataframes = [[] for _ in range(n_dataframes)]
     for index, row in df.iterrows():
-        class_n = row['rlnClassNumber']
-        dataframe_assignment = labels[class_n]
-        dataframes[dataframe_assignment] = dataframes[dataframe_assignment].append(row, ignore_index=True)
+        class_n = int(row['rlnClassNumber']) - 1
+        dataframe_assignment = labels[np.where(tt == class_n)][0]
+        dataframes[dataframe_assignment].append(row)
+    # Convert lists of rows to DataFrames
+    dataframes = [pd.DataFrame(rows, columns=df.columns) for rows in dataframes]
     return dataframes
 
 def split_dataframe_by_fibrils(df, labels):
-    n_dataframes = np.max(labels)
-    dataframes = create_empty_dataframes(df, n_dataframes)
+    n_dataframes = int(np.max(labels)) + 1
+    dataframes = [[] for _ in range(n_dataframes)]
     for index, row in df.iterrows():
-        fibril_n = row['rlnNewIndices']
+        fibril_n = int(row['rlnNewIndices']) - 1
         dataframe_assignment = labels[fibril_n]
-        dataframes[dataframe_assignment] = dataframes[dataframe_assignment].append(row, ignore_index=True)
+        dataframes[dataframe_assignment].append(row)
+    # Convert lists of rows to DataFrames
+    dataframes = [pd.DataFrame(rows, columns=df.columns) for rows in dataframes]
     return dataframes
 
+def read_class_averages_star(filename):
+    try:
+        # Read the star file using starfile library
+        star_data = starfile.read(filename)
+
+        # Extract _rlnClassNumber column
+        class_numbers = star_data['rlnClassNumber'].astype(int)
+        
+        translation_table = np.asarray(class_numbers.tolist()) - 1
+
+        return translation_table
+    except Exception as e:
+        print("An error occurred:", e)
+        return []
