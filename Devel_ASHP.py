@@ -1,4 +1,4 @@
-#!/p/project/cvsk18/lammert1/software/miniconda3/envs/ASHP/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on Sun Oct 16 20:12:21 2022
