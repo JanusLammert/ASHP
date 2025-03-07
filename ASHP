@@ -1,4 +1,4 @@
-#!/p/project/cvsk18/lammert1/software/miniconda3/envs/ASHP/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on Sun Oct 16 20:12:21 2022
@@ -180,40 +180,40 @@ for nc in options.cluster_num:
 
     path_graph = options.outpath_graphs
 
-    anaf.plot_matrix(chep_aff_c, class_clusters, path=path_graph, name='CHEP_aff_c_' + nc)
-    anaf.plot_matrix(class_sim, class_clusters, path=path_graph, name='ASHP_aff_c_' + nc)
-    anaf.plot_matrix(chep_aff_c-class_sim, class_clusters, path=path_graph, name='CHEP-ASHP-diff_aff_c_' + nc, cmap='bwr')
+    #anaf.plot_matrix(chep_aff_c, class_clusters, path=path_graph, name='CHEP_aff_c_' + nc)
+    #anaf.plot_matrix(class_sim, class_clusters, path=path_graph, name='ASHP_aff_c_' + nc)
+    #anaf.plot_matrix(chep_aff_c-class_sim, class_clusters, path=path_graph, name='CHEP-ASHP-diff_aff_c_' + nc, cmap='bwr')
 
-    anaf.plot_image_histogram(chep_aff_c, path=path_graph, name='CHEP_aff_c_hist_' + nc)
-    anaf.plot_image_histogram(class_sim, path=path_graph, name='ASHP_aff_c_hist_' + nc)
-    anaf.plot_image_histogram_diff(chep_aff_c-class_sim, path=path_graph, name='CHEP-ASHP-diff_aff_c_hist_' + nc)
+    #anaf.plot_image_histogram(chep_aff_c, path=path_graph, name='CHEP_aff_c_hist_' + nc)
+    #anaf.plot_image_histogram(class_sim, path=path_graph, name='ASHP_aff_c_hist_' + nc)
+    #anaf.plot_image_histogram_diff(chep_aff_c-class_sim, path=path_graph, name='CHEP-ASHP-diff_aff_c_hist_' + nc)
 
-    anaf.plot_matrix(aff_class, class_clusters, path=path_graph, name='CHEP-ASHP-comb_c_' + nc)
-    anaf.plot_image_histogram(aff_class, path=path_graph, name='CHEP-ASHP-comb_c_hist_' + nc)
+    #anaf.plot_matrix(aff_class, class_clusters, path=path_graph, name='CHEP-ASHP-comb_c_' + nc)
+    #anaf.plot_image_histogram(aff_class, path=path_graph, name='CHEP-ASHP-comb_c_hist_' + nc)
 
-    inpoly, outpoly = anaf.calculate_affinity_statistics(class_clusters, chep_aff_c)
-    print()
-    print('CHEP:')
-    print(inpoly/outpoly)
-    inpoly, outpoly = anaf.calculate_affinity_statistics(class_clusters, class_sim)
-    print()
-    print('ASHP:')
-    print(inpoly/outpoly)
-    inpoly, outpoly = anaf.calculate_affinity_statistics(class_clusters, chep_aff_c-class_sim)
-    print()
-    print('CHEP-ASHP:')
-    print(inpoly/outpoly)
-    inpoly, outpoly = anaf.calculate_affinity_statistics(class_clusters, aff_class)
-    print()
-    print('CHEP+ASHP:')
-    print(inpoly/outpoly)
+    #inpoly, outpoly = anaf.calculate_affinity_statistics(class_clusters, chep_aff_c)
+    #print()
+    #print('CHEP:')
+    #print(inpoly/outpoly)
+    #inpoly, outpoly = anaf.calculate_affinity_statistics(class_clusters, class_sim)
+    #print()
+    #print('ASHP:')
+    #print(inpoly/outpoly)
+    #inpoly, outpoly = anaf.calculate_affinity_statistics(class_clusters, chep_aff_c-class_sim)
+    #print()
+    #print('CHEP-ASHP:')
+    #print(inpoly/outpoly)
+    #inpoly, outpoly = anaf.calculate_affinity_statistics(class_clusters, aff_class)
+    #print()
+    #print('CHEP+ASHP:')
+    #print(inpoly/outpoly)
 
-    anaf.plot_matrix(aff_helix, helix_clusters, path=path_graph, name='CHEP-ASHP-comb_aff_h')
-    anaf.plot_image_histogram(aff_helix, path=path_graph, name='CHEP-ASHP-comb_aff_h_hist')
-    inpoly, outpoly = anaf.calculate_affinity_statistics(helix_clusters, aff_helix)
-    print()
-    print('CHEP+ASHP helix:')
-    print(inpoly/outpoly)
+    #anaf.plot_matrix(aff_helix, helix_clusters, path=path_graph, name='CHEP-ASHP-comb_aff_h')
+    #anaf.plot_image_histogram(aff_helix, path=path_graph, name='CHEP-ASHP-comb_aff_h_hist')
+    #inpoly, outpoly = anaf.calculate_affinity_statistics(helix_clusters, aff_helix)
+    #print()
+    #print('CHEP+ASHP helix:')
+    #print(inpoly/outpoly)
 
     anaf.separate_and_save_images(options.infile, class_clusters, 'class-averages-by-clusters_' + nc)
 
