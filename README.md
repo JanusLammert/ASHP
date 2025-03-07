@@ -21,7 +21,7 @@ Follow these steps to get ASHP up and running:
 
 3. Make the scripts executable:
    ```bash
-   chmod +x <your_scripts>
+   chmod +x ASHP
    ```
 
 ## Guide
