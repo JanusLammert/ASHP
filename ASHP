@@ -32,7 +32,7 @@ progname = os.path.basename(sys.argv[0])
 
 parser = ArgumentParser(
     description=(
-        "ASHP: Autoselection of Helical Polymers. "
+        "Automated Separation of Helical Polymers (ASHP). "
         "Tool to differentiate between different polymorphs based on the results of 2D Classification.\n"
         "\n"
         "=== REQUIRED ARGUMENTS ===\n"
