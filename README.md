@@ -2,6 +2,8 @@
 
 **ASHP** is a tool for the **Automated Separation of 2D Classes** based on the 2D-class-averages, combined with **CHEP** [1].
 
+by Janus Lammert (j.lammert@fz-juelich.de)
+
 ## Prerequisites
 
 Before you start, ensure you have the following installed:
