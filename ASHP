@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Created on Sun Oct 16 20:12:21 2022
+
+Automated Separation of Helical Polymers (ASHP)
+    Copyright (C) 2025  Janus Lammert
 
 @author: Janus Lammert ☺
 """
-
-#spectral clustering
 
 import functions as f
 import OSS
@@ -27,28 +27,132 @@ import star2 as chep
 
 start = time.time()
 
-ASHP_VERSION = "0.9"
+ASHP_VERSION = "1.0"
 progname = os.path.basename(sys.argv[0])
-parser = ArgumentParser(description="ASHP: Autoselection of Helical Polymers. Tool to differetiate between different polymorphs based on the results of 2D-Classification.")
-parser.add_argument("-i", "--infile", type=str, required=True, help="Pass the 2D classification Relion .mrc file")
-parser.add_argument("-is", "--infile_star", type=str, required=True, help="Path to the particle or data starfile.")
-parser.add_argument("-c", "--cluster_num", nargs='+', type=int, default=2, help="Number of clusters for clustering algorithm")
-parser.add_argument("-a", "--algorithm", type=str, default="Spectral_clustering", help="Algorithm used for clustering. Options: Spectral_clustering, kmeans")
-parser.add_argument("-og", "--outpath_graphs", type=str, default="result", help="Name of the outputpath for images")
-parser.add_argument("-o", "--output", type=str, required=True, help="Path for the output of the starfile")
-parser.add_argument("-m", "--metric", type=str, default="MSE", help="Metric for the distance parameter. Options: MSE, conv")
-parser.add_argument("-w", "--window_size", type=int, default=35, help="Windowsize")
-parser.add_argument("-n", "--num_window", type=int, default=30, help="Number of windows")
-parser.add_argument("-t", "--topnum", type=int, default=5, help='Number of windows which get taken into account for classification')
-parser.add_argument("-p", "--parallelise", type=int, default=-1, help='Number of cores')
-parser.add_argument("-l", "--laplacian", action="store_true", help="Should the laplacian be calculated?")
-parser.add_argument("-b", "--bar", action="store_true", help="Show progressbar")
-parser.add_argument("-fu", "--func", action="store_true", help="Toggle window-function")
-parser.add_argument("-s", "--size", type=int, default=60, help="Sicereduction in ydirection to reduce computetime")
-parser.add_argument("-r", "--reduction", type=int, default=5, help="Reduction of windowsize in comparison to class image")
-parser.add_argument("-f", "--factor", type=int, default=1, help="Weight between CHEP and ASHP. Lower means ASHP is wheighted stronger, higher means CHEP is weighted stronger")
-parser.add_argument("-V", "--version", action="version", version="ASHP version: " + ASHP_VERSION, help="Print ASHP version and exit")
+
+parser = ArgumentParser(
+    description=(
+        "ASHP: Autoselection of Helical Polymers. "
+        "Tool to differentiate between different polymorphs based on the results of 2D Classification.\n"
+        "\n"
+        "=== REQUIRED ARGUMENTS ===\n"
+        "-i, --infile       Path to the 2D classification Relion .mrc file\n"
+        "-is, --infile_star Path to the particle or data star file\n"
+        "-o, --output       Path for the output star file\n"
+        "\n"
+        "=== OPTIONAL ARGUMENTS ===\n"
+        "-c, --cluster_num  Number of clusters for the clustering algorithm\n"
+        "-og, --outpath_graphs Directory name for output images\n"
+        "-m, --metric       Metric for distance calculation (default: MSE)\n"
+        "-w, --window_size  Window size, ideally ~10% of the box size (default: 26)\n"
+        "-n, --num_window   Number of windows used (default: 5)\n"
+        "-t, --topnum       Number of top-ranked windows considered for classification (default: 5)\n"
+        "-p, --parallelise  Number of CPU cores to use (default: -1)\n"
+        "-s, --size         Size reduction in Y direction (default: 60)\n"
+        "-r, --reduction    Reduction of window size (default: 5)\n"
+        "-f, --factor       Weight between CHEP and ASHP (default: 1)\n"
+        "-V, --version      Print ASHP version and exit\n"
+        "\n"
+        "=== EXPERT OPTIONS (KEEP AT DEFAULT) ===\n"
+        "-a, --algorithm    Algorithm used for clustering (default: Spectral_clustering)\n"
+        "-l, --laplacian    Should the Laplacian be calculated? (default: False)\n"
+        "-fu, --func        Toggle window function (default: False)\n"
+    )
+)
+
+# ============== REQUIRED ARGUMENTS ==============
+
+parser.add_argument(
+    "-i", "--infile", type=str, required=True,
+    help="Path to the 2D classification Relion .mrc file"
+)
+
+parser.add_argument(
+    "-is", "--infile_star", type=str, required=True,
+    help="Path to the particle or data star file"
+)
+
+parser.add_argument(
+    "-o", "--output", type=str, required=True,
+    help="Path for the output star file"
+)
+
+# ============== OPTIONAL ARGUMENTS ==============
+
+parser.add_argument(
+    "-c", "--cluster_num", nargs='+', type=int, default=[2],
+    help="Number of clusters for the clustering algorithm. Can be a list. Example: -c 2 3 4 5"
+)
+
+parser.add_argument(
+    "-og", "--outpath_graphs", type=str, default="result",
+    help="Directory name for output images"
+)
+
+parser.add_argument(
+    "-m", "--metric", type=str, default="MSE",
+    help="Metric for distance calculation. Options: MSE, conv (default: MSE)"
+)
+
+parser.add_argument(
+    "-w", "--window_size", type=int, default=26,
+    help="Window size, ideally ~10% of the box size (default: 26)"
+)
+
+parser.add_argument(
+    "-n", "--num_window", type=int, default=5,
+    help="Number of windows used. Usually, the best results are obtained with 5 (default: 5)"
+)
+
+parser.add_argument(
+    "-t", "--topnum", type=int, default=5,
+    help="Number of top-ranked windows considered for classification (default: 5)"
+)
+
+parser.add_argument(
+    "-p", "--parallelise", type=int, default=-1,
+    help="Number of CPU cores to use. If not set, it uses all available cores (default: -1)"
+)
+
+parser.add_argument(
+    "-s", "--size", type=int, default=60,
+    help="Size reduction in the Y direction to reduce computation time (default: 60)"
+)
+
+parser.add_argument(
+    "-r", "--reduction", type=int, default=5,
+    help="Reduction of window size relative to the class image (default: 5)"
+)
+
+parser.add_argument(
+    "-f", "--factor", type=int, default=1,
+    help="Weight between CHEP and ASHP. Lower values weight ASHP more strongly, higher values weight CHEP more strongly (default: 1)"
+)
+
+parser.add_argument(
+    "-V", "--version", action="version", version=f"ASHP version: {ASHP_VERSION}",
+    help="Print ASHP version and exit"
+)
+
+# ============== EXPERT OPTIONS (KEEP AT DEFAULT) ==============
+
+parser.add_argument(
+    "-a", "--algorithm", type=str, default="Spectral_clustering",
+    help="KEEP AT DEFAULT: Algorithm used for clustering. Options: Spectral_clustering, kmeans (default: Spectral_clustering)"
+)
+
+parser.add_argument(
+    "-l", "--laplacian", action="store_true",
+    help="KEEP AT DEFAULT: Should the Laplacian be calculated? (default: False)"
+)
+
+parser.add_argument(
+    "-fu", "--func", action="store_true",
+    help="KEEP AT DEFAULT: Toggle window function (default: False)"
+)
+
 options = parser.parse_args()
+
 
 print(options)
 
