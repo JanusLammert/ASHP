@@ -125,7 +125,7 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "-f", "--factor", type=int, default=1,
+    "-f", "--factor", type=float, default=1,
     help="Weight between CHEP and ASHP. Lower values weight ASHP more strongly, higher values weight CHEP more strongly (default: 1)"
 )
 
